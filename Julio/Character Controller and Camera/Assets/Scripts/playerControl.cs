@@ -11,9 +11,10 @@ public class playerControl : MonoBehaviour {
 	public float sensitivity;
 	public float cameraHeight;
 	public float gravity;
-	public float minViewAngle, maxViewAngle;
+	public float minViewAngle = -45f;
+	public float maxViewAngle = 10f;
 
-	public bool firstPerson = false;
+	private float rotationY = 0f;
 
 	Vector3 offset;
 	public float foffset;
@@ -24,14 +25,10 @@ public class playerControl : MonoBehaviour {
 		controller = GetComponent<CharacterController> ();
 		camera = GetComponentInChildren<Camera> ();
 
-		if (firstPerson) {
-			//use first transform
-			camera.transform.localPosition = new Vector3 (0, cameraHeight, 0);
-		} else {
-			//use third
-			offset = transform.position - camera.transform.position;
-			camera.transform.position -= offset;
-		}
+
+		//use first transform
+		camera.transform.localPosition = new Vector3 (0, cameraHeight, 0);
+		
 
 		camera.transform.rotation = Quaternion.LookRotation (transform.forward, transform.up);
 	}
@@ -50,14 +47,6 @@ public class playerControl : MonoBehaviour {
 		//move player
 		direction.x = moveInput.x;
 		direction.z = moveInput.z;
-		/*
-		if (moveInput.magnitude > 0) {
-			//transform.TransformDirection(camera.transform.forward);
-			transform.rotation = Quaternion.LookRotation (camera.transform.forward);
-			camera.transform.rotation = Quaternion.LookRotation (transform.forward, transform.up);
-
-		}
-		*/
 
 		if (controller.isGrounded) {
 			//if grounded
@@ -73,10 +62,11 @@ public class playerControl : MonoBehaviour {
 		//look
 	    //camera.transform.Rotate(0, mouseX * sensitivity * Time.deltaTime, 0);
 
-	    //locking mechanism that keeps camera in boundaries, but shuts off movement once it leaves :(
-		if((camera.transform.position.y >= minViewAngle) && (camera.transform.position.y <= maxViewAngle)){
-			camera.transform.Rotate(mouseY * sensitivity * Time.deltaTime, 0, 0);
-		}
+	    //Rotates camera between given angles
+		rotationY -= mouseY * sensitivity * Time.deltaTime;
+		rotationY = Mathf.Clamp (rotationY, minViewAngle, maxViewAngle);
+			
+		camera.transform.localEulerAngles = new Vector3(-rotationY, camera.transform.localEulerAngles.y, 0);
 
 
 		camera.transform.position = transform.position - (camera.transform.forward * foffset); 
