@@ -20,7 +20,7 @@ public class playerControl : MonoBehaviour {
 	Vector3 offset;
 	public float foffset;
 	private RaycastHit hit;
-	float distToGround = 5f;
+	float distToGround = 3f;
 	float theta;
 
 	Vector3 normal;
@@ -28,6 +28,9 @@ public class playerControl : MonoBehaviour {
 	private Vector3 direction = Vector3.zero; // (0, 0, 0)
 
 	void Start () {
+
+		slideSpeed = 5f;
+
 		controller = GetComponent<CharacterController> ();
 		camera = GetComponentInChildren<Camera> ();
 
@@ -64,8 +67,6 @@ public class playerControl : MonoBehaviour {
 			// get input
 			Vector3 moveInput = (transform.forward * Input.GetAxis ("Vertical") +
 				transform.right * Input.GetAxis ("Horizontal")) * speed;
-			
-			transform.Rotate(0, mouseX * sensitivity * Time.deltaTime, 0f);
 
 			//move player
 			direction.x = moveInput.x;
@@ -82,34 +83,21 @@ public class playerControl : MonoBehaviour {
 			
 		} else {
 			//sliding
-			Vector3 into = Vector3.Cross(transform.up, normal);
-			Vector3 downhill = Vector3.Cross (into, normal);
-			downhill = downhill.normalized;
-			direction = downhill * slideSpeed;
-		}
-
-		/*
-		if (controller.isGrounded) {
-			
-			if (Physics.Raycast (transform.position, -transform.up, hit, distToGround)) {
-				normal = hit.normal;
-				theta = Vector3.Angle (normal, transform.up);
-				//if the angle of the slope is greater than 45f
-				if (theta > 45f) {
-					//slide down
-					Vector3 into = Vector3.Cross(transform.up, normal);
-					Vector3 downhill = Vector3.Cross (into, normal);
-					downhill = downhill.normalized;
-					direction = downhill * slideSpeed;
-
-				} else {
-					//jump
-
-					direction.y = 0;
-				}
+			if (!controller.isGrounded) {
+				direction.y -= 1;
+			} else {
+				//usually is just in the else statement
+				Vector3 into = Vector3.Cross(transform.up, normal);
+				Vector3 downhill = Vector3.Cross (into, normal);
+				downhill = downhill.normalized;
+				direction = downhill * slideSpeed;
+				Debug.Log("Sliding");
 			}
+
 		}
-		*/
+
+		transform.Rotate(0, mouseX * sensitivity * Time.deltaTime, 0f);
+			
 
 		controller.Move (direction * Time.deltaTime);
 		direction.y -= gravity * Time.deltaTime;
