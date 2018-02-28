@@ -133,7 +133,23 @@ ModelImporter:
       mirror: 0
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
-      events: []
+      events:
+      - time: 0.35109717
+        functionName: ActivateSwordCollider
+        data: 
+        objectReferenceParameter: {fileID: 11500000, guid: 0bd9ee2c475f8f14e82434afadd6cf8a,
+          type: 3}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      - time: 0.38244513
+        functionName: DeactivateSwordCollider
+        data: 
+        objectReferenceParameter: {fileID: 11500000, guid: 0bd9ee2c475f8f14e82434afadd6cf8a,
+          type: 3}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
       transformMask:
       - path: 
         weight: 1

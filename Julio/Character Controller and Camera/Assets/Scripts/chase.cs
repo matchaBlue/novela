@@ -2,9 +2,14 @@
 using System.Collections;
 
 public class chase : MonoBehaviour {
+
+	private CharacterController cc;
+
 	public Transform player;
 	public Transform head;
 	Animator anim;
+
+	private HitboxScript hbs;
 
 	string state = "patrol";
 	public GameObject[] waypoints;
@@ -16,16 +21,21 @@ public class chase : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		anim = GetComponent<Animator> ();
+		hbs = GetComponentInChildren<HitboxScript> ();
+
+		cc = GetComponent<CharacterController> ();
+		state = "patrol";
 	}
 	
 	// Update is called once per frame
 	void Update () {
-
+		
 		Vector3 direction = player.position - this.transform.position;
 		direction.y = 0;
 		float angle = Vector3.Angle (direction, head.transform.up);
 
-		if (state == "patrol" && waypoints.Length > 0) {
+		if (state == "patrol" && (waypoints.Length > 0)) {
+			Debug.Log ("Should be walking");
 			anim.SetBool ("isIdle", false);
 			anim.SetBool ("isWalking", true);
 			if (Vector3.Distance (waypoints [currentWP].transform.position, transform.position) < accuracyWP) {
@@ -55,10 +65,18 @@ public class chase : MonoBehaviour {
 			}
 				
 		} else {
-			anim.SetBool ("isIdle", true);
-			anim.SetBool ("isWalking", false);
+			anim.SetBool ("isIdle", false);
+			anim.SetBool ("isWalking", true);
 			state = "patrol";
 		}
 
+	}
+
+	void ActivateSwordCollider(){
+		hbs.ActivateSwordCollider ();
+	}
+
+	void DeactivateSwordCollider(){
+		hbs.DeactivateSwordCollider ();
 	}
 }

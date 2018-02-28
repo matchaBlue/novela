@@ -29,7 +29,7 @@ public class playerControl : MonoBehaviour {
 
 	void Start () {
 
-		slideSpeed = 5f;
+		slideSpeed = 20f;
 
 		controller = GetComponent<CharacterController> ();
 		camera = GetComponentInChildren<Camera> ();
