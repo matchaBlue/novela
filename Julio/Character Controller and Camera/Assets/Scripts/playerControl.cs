@@ -8,6 +8,7 @@ public class playerControl : MonoBehaviour {
 
 	public float speed;
 	public float jumpSpeed;
+	public float slideSpeed;
 	public float sensitivity;
 	public float cameraHeight;
 	public float gravity;
@@ -18,10 +19,18 @@ public class playerControl : MonoBehaviour {
 
 	Vector3 offset;
 	public float foffset;
+	private RaycastHit hit;
+	float distToGround = 3f;
+	float theta;
+
+	Vector3 normal;
 
 	private Vector3 direction = Vector3.zero; // (0, 0, 0)
 
 	void Start () {
+
+		slideSpeed = 20f;
+
 		controller = GetComponent<CharacterController> ();
 		camera = GetComponentInChildren<Camera> ();
 
@@ -31,31 +40,65 @@ public class playerControl : MonoBehaviour {
 		
 
 		camera.transform.rotation = Quaternion.LookRotation (transform.forward, transform.up);
+
 	}
 	
 
+
+	bool isSliding = false;
+
 	void Update () {
 
-		// get input
-		Vector3 moveInput = (transform.forward * Input.GetAxis ("Vertical") +
-		                    transform.right * Input.GetAxis ("Horizontal")) * speed;
+		if (Physics.Raycast (transform.position, -transform.up, out hit, distToGround)) {
+			normal = hit.normal;
+			theta = Vector3.Angle (normal, transform.up);
+		}
+
+		if (theta > 45f) {
+			isSliding = true;
+		} else {
+			isSliding = false;
+		}
+		
 		float mouseX = Input.GetAxis ("Mouse X");
 		float mouseY = -Input.GetAxis ("Mouse Y");
 
-		transform.Rotate(0, mouseX * sensitivity * Time.deltaTime, 0f);
+		if (!isSliding) {
+			// get input
+			Vector3 moveInput = (transform.forward * Input.GetAxis ("Vertical") +
+				transform.right * Input.GetAxis ("Horizontal")) * speed;
 
-		//move player
-		direction.x = moveInput.x;
-		direction.z = moveInput.z;
+			//move player
+			direction.x = moveInput.x;
+			direction.z = moveInput.z;
 
-		if (controller.isGrounded) {
-			//if grounded
-			if (Input.GetKey (KeyCode.Space)) {
-				direction.y = jumpSpeed;
-			} else {
-				direction.y = 0;
+			//on ground
+			if (controller.isGrounded) {
+				if (Input.GetKey (KeyCode.Space)) {
+					direction.y = jumpSpeed;
+				} else {
+					direction.y = 0;
+				}
 			}
+			
+		} else {
+			//sliding
+			if (!controller.isGrounded) {
+				direction.y -= 1;
+			} else {
+				//usually is just in the else statement
+				Vector3 into = Vector3.Cross(transform.up, normal);
+				Vector3 downhill = Vector3.Cross (into, normal);
+				downhill = downhill.normalized;
+				direction = downhill * slideSpeed;
+				Debug.Log("Sliding");
+			}
+
 		}
+
+		transform.Rotate(0, mouseX * sensitivity * Time.deltaTime, 0f);
+			
+
 		controller.Move (direction * Time.deltaTime);
 		direction.y -= gravity * Time.deltaTime;
 
