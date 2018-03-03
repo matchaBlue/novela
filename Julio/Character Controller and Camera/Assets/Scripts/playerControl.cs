@@ -6,6 +6,8 @@ public class playerControl : MonoBehaviour {
 	private CharacterController controller;
 	private Camera camera;
 
+	private Animator anim;
+
 	public float speed;
 	public float jumpSpeed;
 	public float slideSpeed;
@@ -29,11 +31,14 @@ public class playerControl : MonoBehaviour {
 
 	void Start () {
 
+
 		slideSpeed = 20f;
 
 		controller = GetComponent<CharacterController> ();
 		camera = GetComponentInChildren<Camera> ();
-
+		anim = GetComponentInChildren<Animator> ();
+		anim.SetBool("isIdle", true);
+		anim.SetBool("isWalking", false);
 
 		//use first transform
 		camera.transform.localPosition = new Vector3 (0, cameraHeight, 0);
@@ -49,6 +54,7 @@ public class playerControl : MonoBehaviour {
 
 	void Update () {
 
+
 		if (Physics.Raycast (transform.position, -transform.up, out hit, distToGround)) {
 			normal = hit.normal;
 			theta = Vector3.Angle (normal, transform.up);
@@ -63,10 +69,20 @@ public class playerControl : MonoBehaviour {
 		float mouseX = Input.GetAxis ("Mouse X");
 		float mouseY = -Input.GetAxis ("Mouse Y");
 
+
 		if (!isSliding) {
 			// get input
 			Vector3 moveInput = (transform.forward * Input.GetAxis ("Vertical") +
 				transform.right * Input.GetAxis ("Horizontal")) * speed;
+
+			if(moveInput.magnitude > 1f){
+				anim.SetBool("isIdle", false);
+				anim.SetBool("isWalking", true);
+			}
+			else{
+				anim.SetBool("isIdle", true);
+				anim.SetBool("isWalking", false);
+			}
 
 			//move player
 			direction.x = moveInput.x;
@@ -83,6 +99,7 @@ public class playerControl : MonoBehaviour {
 			
 		} else {
 			//sliding
+			//anim.setBool("isSliding", true);
 			if (!controller.isGrounded) {
 				direction.y -= 1;
 			} else {

@@ -35,7 +35,7 @@ public class chase : MonoBehaviour {
 		float angle = Vector3.Angle (direction, head.transform.up);
 
 		if (state == "patrol" && (waypoints.Length > 0)) {
-			Debug.Log ("Should be walking");
+			//Debug.Log ("Should be walking");
 			anim.SetBool ("isIdle", false);
 			anim.SetBool ("isWalking", true);
 			if (Vector3.Distance (waypoints [currentWP].transform.position, transform.position) < accuracyWP) {
