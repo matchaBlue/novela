@@ -9,6 +9,7 @@ public class playerControl : MonoBehaviour {
 	private Animator anim;
 
 	public float speed;
+	public float sprintSpeed;
 	public float jumpSpeed;
 	public float slideSpeed;
 	public float sensitivity;
@@ -39,6 +40,7 @@ public class playerControl : MonoBehaviour {
 		anim = GetComponentInChildren<Animator> ();
 		anim.SetBool("isIdle", true);
 		anim.SetBool("isWalking", false);
+		anim.SetBool("isRunning", false);
 
 		//use first transform
 		camera.transform.localPosition = new Vector3 (0, cameraHeight, 0);
@@ -75,13 +77,24 @@ public class playerControl : MonoBehaviour {
 			Vector3 moveInput = (transform.forward * Input.GetAxis ("Vertical") +
 				transform.right * Input.GetAxis ("Horizontal")) * speed;
 
-			if(moveInput.magnitude > 1f){
+			if((moveInput.magnitude > 1f) && !(Input.GetButton("Fire3"))){
 				anim.SetBool("isIdle", false);
 				anim.SetBool("isWalking", true);
+				anim.SetBool("isRunning", false);
+			}
+			else if((moveInput.magnitude > 1f) && (Input.GetButton("Fire3"))){
+				Debug.Log("Sprint");
+				anim.SetBool("isIdle", false);
+				anim.SetBool("isWalking", false);
+				anim.SetBool("isRunning", true);
+				if(anim.GetBool("isRunning")){
+					moveInput = moveInput * sprintSpeed;
+				}
 			}
 			else{
 				anim.SetBool("isIdle", true);
 				anim.SetBool("isWalking", false);
+				anim.SetBool("isRunning", false);
 			}
 
 			//move player
