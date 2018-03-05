@@ -1,6 +1,6 @@
 fileFormatVersion: 2
-guid: 93540bd1a1e94fe409b051046dcf5505
-timeCreated: 1520067117
+guid: aa627ec150977ef4085a03a2f674d5f3
+timeCreated: 1520228048
 licenseType: Free
 ModelImporter:
   serializedVersion: 19
@@ -54,9 +54,9 @@ ModelImporter:
     4300000: Leg
     7400000: Default Take
     7400002: Idle
-    7400004: Run
-    7400006: Walk
-    7400008: Idle0
+    7400004: Jump
+    7400006: Run
+    7400008: Walk
     9500000: //RootNode
     13700000: Leg
   materials:
@@ -81,10 +81,10 @@ ModelImporter:
     extraExposedTransformPaths: []
     clipAnimations:
     - serializedVersion: 16
-      name: Idle0
-      takeName: Idle
+      name: Default Take
+      takeName: Default Take
       firstFrame: 0
-      lastFrame: 57
+      lastFrame: 27
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -159,6 +159,80 @@ ModelImporter:
       takeName: Idle
       firstFrame: 0
       lastFrame: 57
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 1
+      loopBlend: 1
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: Armature
+        weight: 1
+      - path: Armature/root
+        weight: 1
+      - path: Armature/root/Bone
+        weight: 1
+      - path: Armature/root/Bone/chest
+        weight: 1
+      - path: Armature/root/Bone/chest/collar_l
+        weight: 1
+      - path: Armature/root/Bone/chest/collar_l/upperarm_l
+        weight: 1
+      - path: Armature/root/Bone/chest/collar_l/upperarm_l/forearm_l
+        weight: 1
+      - path: Armature/root/Bone/chest/collar_l/upperarm_l/forearm_l/hand_l
+        weight: 1
+      - path: Armature/root/Bone/chest/collar_r
+        weight: 1
+      - path: Armature/root/Bone/chest/collar_r/upperarm_r
+        weight: 1
+      - path: Armature/root/Bone/chest/collar_r/upperarm_r/forearm_r
+        weight: 1
+      - path: Armature/root/Bone/chest/collar_r/upperarm_r/forearm_r/hand_r
+        weight: 1
+      - path: Armature/root/Bone/chest/neck
+        weight: 1
+      - path: Armature/root/Bone/chest/neck/head
+        weight: 1
+      - path: Armature/root/Bone/pelvis
+        weight: 1
+      - path: Armature/root/Bone/pelvis/hip_l
+        weight: 1
+      - path: Armature/root/Bone/pelvis/hip_l/shin_l
+        weight: 1
+      - path: Armature/root/Bone/pelvis/hip_l/shin_l/foot_l
+        weight: 1
+      - path: Armature/root/Bone/pelvis/hip_r
+        weight: 1
+      - path: Armature/root/Bone/pelvis/hip_r/shin_r
+        weight: 1
+      - path: Armature/root/Bone/pelvis/hip_r/shin_r/foot_r
+        weight: 1
+      - path: Leg
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: Jump
+      takeName: Jump
+      firstFrame: 0
+      lastFrame: 28
       wrapMode: 0
       orientationOffsetY: 0
       level: 0

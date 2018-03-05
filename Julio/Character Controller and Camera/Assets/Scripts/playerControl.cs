@@ -41,6 +41,7 @@ public class playerControl : MonoBehaviour {
 		anim.SetBool("isIdle", true);
 		anim.SetBool("isWalking", false);
 		anim.SetBool("isRunning", false);
+		anim.SetBool("isJumping", false);
 
 		//use first transform
 		camera.transform.localPosition = new Vector3 (0, cameraHeight, 0);
@@ -81,12 +82,14 @@ public class playerControl : MonoBehaviour {
 				anim.SetBool("isIdle", false);
 				anim.SetBool("isWalking", true);
 				anim.SetBool("isRunning", false);
+				anim.SetBool("isJumping", false);
 			}
 			else if((moveInput.magnitude > 1f) && (Input.GetButton("Fire3"))){
 				Debug.Log("Sprint");
 				anim.SetBool("isIdle", false);
 				anim.SetBool("isWalking", false);
 				anim.SetBool("isRunning", true);
+				anim.SetBool("isJumping", false);
 				if(anim.GetBool("isRunning")){
 					moveInput = moveInput * sprintSpeed;
 				}
@@ -95,6 +98,7 @@ public class playerControl : MonoBehaviour {
 				anim.SetBool("isIdle", true);
 				anim.SetBool("isWalking", false);
 				anim.SetBool("isRunning", false);
+				anim.SetBool("isJumping", false);
 			}
 
 			//move player
@@ -104,8 +108,17 @@ public class playerControl : MonoBehaviour {
 			//on ground
 			if (controller.isGrounded) {
 				if (Input.GetKey (KeyCode.Space)) {
+					//isJumping
+					anim.SetBool("isIdle", false);
+					anim.SetBool("isWalking", false);
+					anim.SetBool("isRunning", false);
+					anim.SetBool("isJumping", true);
 					direction.y = jumpSpeed;
 				} else {
+					anim.SetBool("isIdle", false);
+					anim.SetBool("isWalking", false);
+					anim.SetBool("isRunning", false);
+					anim.SetBool("isJumping", false);
 					direction.y = 0;
 				}
 			}
