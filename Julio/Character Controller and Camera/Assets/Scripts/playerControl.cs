@@ -78,13 +78,13 @@ public class playerControl : MonoBehaviour {
 			Vector3 moveInput = (transform.forward * Input.GetAxis ("Vertical") +
 				transform.right * Input.GetAxis ("Horizontal")) * speed;
 
-			if((moveInput.magnitude > 1f) && !(Input.GetButton("Fire3"))){
+			if((moveInput.magnitude > 0f) && !(Input.GetButton("Fire3"))){
 				anim.SetBool("isIdle", false);
 				anim.SetBool("isWalking", true);
 				anim.SetBool("isRunning", false);
 				anim.SetBool("isJumping", false);
 			}
-			else if((moveInput.magnitude > 1f) && (Input.GetButton("Fire3"))){
+			else if((moveInput.magnitude > 0f) && (Input.GetButton("Fire3"))){
 				Debug.Log("Sprint");
 				anim.SetBool("isIdle", false);
 				anim.SetBool("isWalking", false);
@@ -108,7 +108,7 @@ public class playerControl : MonoBehaviour {
 			//on ground
 			if (controller.isGrounded) {
 				if (Input.GetKey (KeyCode.Space)) {
-					//isJumping
+					Debug.Log("Jump");
 					anim.SetBool("isIdle", false);
 					anim.SetBool("isWalking", false);
 					anim.SetBool("isRunning", false);
