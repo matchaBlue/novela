@@ -4,7 +4,7 @@ using System.Collections;
 public class playerControl : MonoBehaviour {
 
 	private CharacterController controller;
-	private Camera camera;
+	//private Camera camera;
 
 	private Animator anim;
 
@@ -12,11 +12,12 @@ public class playerControl : MonoBehaviour {
 	public float sprintSpeed;
 	public float jumpSpeed;
 	public float slideSpeed;
-	public float sensitivity;
+	//public float sensitivity;
 	public float cameraHeight;
 	public float gravity;
-	public float minViewAngle = -45f;
-	public float maxViewAngle = 10f;
+
+	public Transform pivot;
+	public float rotSpeed;
 
 	private float rotationY = 0f;
 
@@ -36,7 +37,7 @@ public class playerControl : MonoBehaviour {
 		slideSpeed = 20f;
 
 		controller = GetComponent<CharacterController> ();
-		camera = GetComponentInChildren<Camera> ();
+		//camera = GetComponentInChildren<Camera> ();
 		anim = GetComponentInChildren<Animator> ();
 		anim.SetBool("isIdle", true);
 		anim.SetBool("isWalking", false);
@@ -44,10 +45,10 @@ public class playerControl : MonoBehaviour {
 		anim.SetBool("isJumping", false);
 
 		//use first transform
-		camera.transform.localPosition = new Vector3 (0, cameraHeight, 0);
+		//camera.transform.localPosition = new Vector3 (0, cameraHeight, 0);
 		
 
-		camera.transform.rotation = Quaternion.LookRotation (transform.forward, transform.up);
+		//camera.transform.rotation = Quaternion.LookRotation (transform.forward, transform.up);
 
 	}
 	
@@ -69,13 +70,13 @@ public class playerControl : MonoBehaviour {
 			isSliding = false;
 		}
 		
-		float mouseX = Input.GetAxis ("Mouse X");
-		float mouseY = -Input.GetAxis ("Mouse Y");
+		//float mouseX = Input.GetAxis ("Mouse X");
+		//float mouseY = -Input.GetAxis ("Mouse Y");
 
 
 		if (!isSliding) {
 			// get input
-			Vector3 moveInput = (transform.forward * Input.GetAxis ("Vertical") +
+			Vector3 moveInput = (-transform.forward * Input.GetAxis ("Vertical") +
 				transform.right * Input.GetAxis ("Horizontal")) * speed;
 
 			if((moveInput.magnitude > 0f) && !(Input.GetButton("Fire3"))){
@@ -139,23 +140,28 @@ public class playerControl : MonoBehaviour {
 
 		}
 
-		transform.Rotate(0, mouseX * sensitivity * Time.deltaTime, 0f);
+		//transform.Rotate(0, mouseX * sensitivity * Time.deltaTime, 0f);
 			
 
 		controller.Move (direction * Time.deltaTime);
 		direction.y -= gravity * Time.deltaTime;
 
+		//Move player in different directions based on where cam is looking
+		if(Input.GetAxis("Horizontal") != 0 || Input.GetAxis("Vertical") != 0){
+			transform.rotation = Quaternion.Euler(0f, pivot.rotation.eulerAngles.y, 0f);
+		}
+
 		//look
 	    //camera.transform.Rotate(0, mouseX * sensitivity * Time.deltaTime, 0);
 
 	    //Rotates camera between given angles
-		rotationY -= mouseY * sensitivity * Time.deltaTime;
-		rotationY = Mathf.Clamp (rotationY, minViewAngle, maxViewAngle);
+		//rotationY -= mouseY * sensitivity * Time.deltaTime;
+		//rotationY = Mathf.Clamp (rotationY, minViewAngle, maxViewAngle);
 			
-		camera.transform.localEulerAngles = new Vector3(-rotationY, camera.transform.localEulerAngles.y, 0);
+		//camera.transform.localEulerAngles = new Vector3(-rotationY, camera.transform.localEulerAngles.y, 0);
 
 
-		camera.transform.position = transform.position - (camera.transform.forward * foffset); 
+		//camera.transform.position = transform.position - (camera.transform.forward * foffset); 
 
 	}
 }
