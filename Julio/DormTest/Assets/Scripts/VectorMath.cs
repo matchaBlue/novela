@@ -50,6 +50,7 @@ public class VectorMath : MonoBehaviour{
 	bool sliding = false;
 	bool onWall = false;
 	bool grabbed = false;
+	bool gettingUp = false;
 
 	public float gravMult = 0.01f;
 
@@ -66,7 +67,7 @@ public class VectorMath : MonoBehaviour{
 
 		//check if grabbing wall. should turn off while already grabbed so you dont turn onWall->false when animating.
 		//onWall is global so mine aswell only use this if onWall is false
-		if(!onWall && Physics.Raycast(head.position, head.forward, out headHit, distToHead)){
+		if(!onWall && Physics.Raycast(head.position, head.forward, out headHit, distToHead) && moveInput.y < 0f){
 			dist = head.position.y - headHit.collider.GetComponent<MeshRenderer>().bounds.max.y;
 			//using Abs causes it to measure the distance from the bottom aswell, applying a negative height
 			if(Mathf.Abs(dist) <= climbHeight){onWall = true; grabbed = true;}
@@ -90,20 +91,38 @@ public class VectorMath : MonoBehaviour{
 		}
 		else if(!sliding && onWall){
 			//not sliding, grabbing wall
-			if(grabbed){
-				transform.position = new Vector3(transform.position.x, transform.position.y - dist, transform.position.z);
-				setAnim("isGrabbing");
-				moveInput = Vector3.zero;
-				grabbed = false;
+			if(grabbed && !gettingUp){
+				if(headHit.normal.y > 0f){
+					Debug.Log("Scanned top of wall, ur gonna clip in. DO NOTHING");
+					sliding = false;
+					onWall = false;
+					//just keep falling
+				}
+				else{
+					Vector3 wallOffset = headHit.collider.GetComponent<MeshRenderer>().bounds.ClosestPoint(transform.position);
+					Debug.Log("Closest point: " + wallOffset);
+					wallOffset = wallOffset + headHit.normal;
+					Debug.Log("Actual position of player: " + wallOffset);
+					Debug.Log("Headhit's Normal: " + headHit.normal);
+					transform.position = new Vector3(wallOffset.x, headHit.collider.GetComponent<MeshRenderer>().bounds.max.y, wallOffset.z);
+					setAnim("isGrabbing");
+					moveInput = Vector3.zero;
+					grabbed = false;
+					gettingUp = true;
+				}
+			}
+			else if(!grabbed && gettingUp){
+				//if the grab anim is done, you can start gettingUp
+				if(anim.GetCurrentAnimatorStateInfo(0).IsName("Base Layer.LedgeGrab") && (Input.GetAxis("Jump") > 0f)){
+					setAnim("isClimbing");
+					gettingUp = false;
+				}
 			}
 			else{
 				//climb here
-				if(anim.GetCurrentAnimatorStateInfo(0).IsName("Base Layer.LedgeGrab") && Input.GetAxis("Jump") > 0f){
-					setAnim("isClimbing");
-				}
 				if(anim.GetCurrentAnimatorStateInfo(0).IsName("Base Layer.LedgeGetUp")){
+					transform.position = new Vector3(-headHit.normal.x + transform.position.x, transform.position.y + 1f, -headHit.normal.z + transform.position.z);
 					onWall = false;
-					transform.position = new Vector3(-headHit.normal.x + transform.position.x, transform.position.y - dist + 2, -headHit.normal.z + transform.position.z);
 				}
 		
 			}
@@ -131,11 +150,13 @@ public class VectorMath : MonoBehaviour{
 
 				if(Input.GetButton("Jump")){
 					moveInput.y = jumpPower;
-					setAnim("isJumping");
+
 				}
 			}
 			else{
+				setAnim("isJumping");
 				Debug.Log("not grounded");
+				speed = runSpeed;
 			}
 
 			moveInput.y += Physics.gravity.y * gravMult;
