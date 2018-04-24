@@ -50,11 +50,7 @@ public class VectorMath : MonoBehaviour{
 	bool sliding = false;
 	bool onWall = false;
 	bool grabbed = false;
-<<<<<<< Updated upstream
 	bool gettingUp = false;
-=======
-	bool getUp = false;
->>>>>>> Stashed changes
 
 	public float gravMult = 0.01f;
 
@@ -95,7 +91,6 @@ public class VectorMath : MonoBehaviour{
 		}
 		else if(!sliding && onWall){
 			//not sliding, grabbing wall
-<<<<<<< Updated upstream
 			if(grabbed && !gettingUp){
 				if(headHit.normal.y > 0f){
 					Debug.Log("Scanned top of wall, ur gonna clip in. DO NOTHING");
@@ -127,28 +122,11 @@ public class VectorMath : MonoBehaviour{
 				//climb here
 				if(anim.GetCurrentAnimatorStateInfo(0).IsName("Base Layer.LedgeGetUp")){
 					transform.position = new Vector3(-headHit.normal.x + transform.position.x, transform.position.y + 1f, -headHit.normal.z + transform.position.z);
-=======
-			if (grabbed && !getUp) {
-				transform.position = new Vector3 (transform.position.x, headHit.collider.GetComponent<MeshRenderer> ().bounds.max.y - 0.5f, transform.position.z);
-				setAnim ("isGrabbing");
-				moveInput = Vector3.zero;
-				grabbed = false;
-				getUp = true;
-			} else if (!grabbed && getUp) {
-				//climb here
-				if (anim.GetCurrentAnimatorStateInfo (0).IsName ("Base Layer.LedgeGrab") && Input.GetAxis ("Jump") > 0f) {
-					setAnim ("isClimbing");
-					getUp = false;
-				}
-			} else {
-				//anim is done, change position
-				if (anim.GetCurrentAnimatorStateInfo (0).IsName ("Base Layer.LedgeGetUp")) {
-					transform.position = new Vector3 (-headHit.normal.x + transform.position.x, transform.position.y + 1f, -headHit.normal.z + transform.position.z);
->>>>>>> Stashed changes
 					onWall = false;
 				}
+		
 			}
-			//transform.position = new Vector3(-headHit.normal.x + transform.position.x, transform.position.y - dist + 2, -headHit.normal.z + transform.position.z);
+
 		}
 		else if(!sliding && !onWall){
 			lastY = moveInput.y;
