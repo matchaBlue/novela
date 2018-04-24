@@ -4,22 +4,23 @@ using System.Collections;
 public class CameraController : MonoBehaviour {
 
 	Vector3 offset;
-	public Transform player;
+	public PlayerController player;
 	public Transform pivot;
 
 	float mouseY;
 	public float minView = -10f;
 	public float maxView = 30f;
-	public float rotSpeed = 10f;
+	public float rotSpeed = 20f;
 
 	void Start () {
-		offset = player.position - transform.position;
+		offset = player.transform.position - transform.position;
 		//Cursor.lockState = CursorLockMode.Locked;
+
 	}
 
 	void LateUpdate () {
 		//rotate cam and keep it locked to player
-		pivot.position = player.position;
+		pivot.position = player.transform.position;
 
 		float horizontal = Input.GetAxis("Mouse X") * rotSpeed * Time.deltaTime;
 		pivot.Rotate(0, horizontal, 0);
@@ -39,7 +40,9 @@ public class CameraController : MonoBehaviour {
 
 		//camera should rotate around pivot, but face player
 		Quaternion rot = Quaternion.Euler(desiredXAngle, desiredYAngle, 0);
-		transform.position = player.position - (rot * offset);
+		transform.position = player.transform.position - (rot * offset);
+
+		player.transform.rotation = Quaternion.Euler(new Vector3(0f, pivot.eulerAngles.y, 0f));
 
 		//if(transform.position.y < pivot.position.y)
 			//transform.position = new Vector3(transform.position.x, pivot.position.y - .5f, pivot.position.z);

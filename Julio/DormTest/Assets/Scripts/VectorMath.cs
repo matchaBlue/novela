@@ -9,7 +9,7 @@ public class VectorMath : MonoBehaviour{
 	CharacterController cc;
 
 
-	public RectTransform healthBar;
+	//public RectTransform healthBar;
 	
 	public Transform pivot;
 
@@ -27,7 +27,7 @@ public class VectorMath : MonoBehaviour{
 	public Transform playerModel;
 
 	void Start(){
-		health = (int)healthBar.sizeDelta.x;
+		//health = (int)healthBar.sizeDelta.x;
 		lastY = 0f;
 		cc = GetComponent<CharacterController>();
 		//initial anim values
@@ -74,7 +74,7 @@ public class VectorMath : MonoBehaviour{
 		}
 
 		improvedMovement();
-		healthControl();
+		//healthControl();
 	}
 
 
@@ -174,11 +174,14 @@ public class VectorMath : MonoBehaviour{
 			//sliding and trying to grab wall
 		}
 
+		Debug.Log("Forward Vector: " + transform.forward);
+
 		cc.Move(moveInput * speed * Time.deltaTime);
 	}
 
 
 	//i wanna move this vvv to a different script. just say ifPlayer is true, display on screen. else, just keep track
+	/*
 	int count = 0;
 	void healthControl(){
 		healthBar.sizeDelta = new Vector2(health, healthBar.sizeDelta.y);
@@ -188,7 +191,7 @@ public class VectorMath : MonoBehaviour{
 				health -= 6;
 		}
 	}
-
+	*/
 	void setAnim(string state){
 		//innefficient, probably should put them in an array and just find the one state to set to true lol
 		//but this saves having to parse through an array so 

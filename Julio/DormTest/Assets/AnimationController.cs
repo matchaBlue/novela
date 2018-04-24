@@ -7,17 +7,52 @@ public class AnimationController : MonoBehaviour {
 	public CameraController cam;
 	private Animator anim;
 	public float rotSpeed = 15f;
+	Vector3 modelRot;
+	float inX, inZ;
 
 	void Start(){
 		player = GetComponentInParent<PlayerController>();
 		anim = GetComponentInParent<Animator>();
+		modelRot = new Vector3(1, 0, 1);
+		inX = inZ = 0;
 	}
 
 	void Update(){
-		if(Input.GetAxis("Vertical") != 0f || Input.GetAxis("Horizontal") != 0f){
-				Quaternion lookRot = Quaternion.LookRotation(new Vector3(player.moveInput.x, 0f, player.moveInput.z));
-				transform.rotation = Quaternion.Slerp(transform.rotation, lookRot, rotSpeed * Time.deltaTime);
+
+		Quaternion lookRot;
+		if(player.moveInput.x != 0){
+			inX = player.moveInput.x;
 			}
+		if(player.moveInput.z != 0){
+			inZ = player.moveInput.z;
+		}
+		lookRot = Quaternion.LookRotation(new Vector3(inX, 0f, inZ));
+
+		if(Input.GetAxis("Horizontal") != 0 || Input.GetAxis("Vertical") != 0){transform.rotation = Quaternion.Slerp(transform.rotation, lookRot, rotSpeed * Time.deltaTime);}
+
+		
+		if(player.getCC().isGrounded){
+			//handle all ground shit
+			if(player.getAngle() > 45f){
+				setAnim("isSliding");
+			}
+			else{
+				//not sliding
+				if(player.moveInput.x != 0f || player.moveInput.z != 0f){
+					setAnim("isRunning");
+				}
+				else{
+					setAnim("isIdle");
+				}
+			}
+		}
+		else{
+			//must be in falling anim
+			if(!Physics.Raycast(transform.position, -transform.up, 0.5f)){
+				setAnim("isJumping");
+			}
+
+		}
 	}
 
 	void setAnim(string state){
@@ -32,6 +67,7 @@ public class AnimationController : MonoBehaviour {
 				anim.SetBool("isJumping", false);
 				anim.SetBool("isGrabbing", false);
 				anim.SetBool("isClimbing", false);
+				anim.SetBool("isSliding", false);
 				break;
 			case "isRunning":
 				//set running true, all else false
@@ -41,6 +77,7 @@ public class AnimationController : MonoBehaviour {
 				anim.SetBool("isJumping", false);
 				anim.SetBool("isGrabbing", false);
 				anim.SetBool("isClimbing", false);
+				anim.SetBool("isSliding", false);
 				break;
 			case "isWalking":
 				//set walking to true, all else to false (there has to be a better way -_-)
@@ -50,6 +87,7 @@ public class AnimationController : MonoBehaviour {
 				anim.SetBool("isJumping", false);
 				anim.SetBool("isGrabbing", false);
 				anim.SetBool("isClimbing", false);
+				anim.SetBool("isSliding", false);
 				break;
 			case "isJumping":
 				//set jumping true, all else false
@@ -59,6 +97,7 @@ public class AnimationController : MonoBehaviour {
 				anim.SetBool("isJumping", true);
 				anim.SetBool("isGrabbing", false);
 				anim.SetBool("isClimbing", false);
+				anim.SetBool("isSliding", false);
 				break;
 			case "isGrabbing":
 				//set grabbing true, all else false
@@ -68,6 +107,7 @@ public class AnimationController : MonoBehaviour {
 				anim.SetBool("isJumping", false);
 				anim.SetBool("isGrabbing", true);
 				anim.SetBool("isClimbing", false);
+				anim.SetBool("isSliding", false);
 				break;
 			case "isClimbing":
 				//set getUp true, all else false
@@ -77,11 +117,18 @@ public class AnimationController : MonoBehaviour {
 				anim.SetBool("isJumping", false);
 				anim.SetBool("isGrabbing", false);
 				anim.SetBool("isClimbing", true);
+				anim.SetBool("isSliding", false);
 				break;
 			case "isSliding":
 				//set sliding anim to be true
 				//no slide anim yet
-				Debug.Log("isSliding");
+				anim.SetBool("isIdle", false);
+				anim.SetBool("isRunning", false);
+				anim.SetBool("isWalking", false);
+				anim.SetBool("isJumping", false);
+				anim.SetBool("isGrabbing", false);
+				anim.SetBool("isClimbing", false);
+				anim.SetBool("isSliding", true);
 				break;
 			default:
 				Debug.Log("Wrong input");
