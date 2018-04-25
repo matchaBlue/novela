@@ -28,7 +28,7 @@ public class AnimationController : MonoBehaviour {
 		}
 		lookRot = Quaternion.LookRotation(new Vector3(inX, 0f, inZ));
 
-		if(Input.GetAxis("Horizontal") != 0 || Input.GetAxis("Vertical") != 0){transform.rotation = Quaternion.Slerp(transform.rotation, lookRot, rotSpeed * Time.deltaTime);}
+		transform.rotation = Quaternion.Slerp(transform.rotation, lookRot, rotSpeed * Time.deltaTime);
 
 		
 		if(player.getCC().isGrounded){

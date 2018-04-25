@@ -180,7 +180,7 @@ public class VectorMath : MonoBehaviour{
 	}
 
 
-	//i wanna move this vvv to a different script. just say ifPlayer is true, display on screen. else, just keep track
+	//i wanna move this part to a different script. just say ifPlayer is true, display on screen. else, just keep track
 	/*
 	int count = 0;
 	void healthControl(){
