@@ -138,14 +138,22 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	void grabCheck(){
-		if(Physics.Raycast(transform.position + Vector3.up, transform.forward, out hHit, 0.5f)){
-			//if u hit something
-			float distance = hHit.collider.GetComponent<MeshRenderer>().bounds.max.y - head.position.y;
-			//Debug.Log(distance);
-			if (distance < 0.5f) {
-				Debug.Log (distance);
-				Debug.Log (hHit.collider.ToString ());
-				currentState = State.grab;
+		RaycastHit headHit;
+		Ray headRay = new Ray();
+		headRay.origin = transform.position + (Vector3.up * 0.5f);
+		headRay.direction = head.forward;
+		Debug.DrawRay(headRay.origin, headRay.direction);
+		float headcastLength = 1f;
+		if(Physics.Raycast(headRay, out headHit, headcastLength)){
+			Debug.Log(headHit.collider.ToString());
+			if(headHit.collider.CompareTag("Player")){
+				if(headHit.collider.bounds.max.y - head.position.y < 0.5f){
+					Vector3 wallOffset = headHit.collider.GetComponent<MeshRenderer>().bounds.ClosestPoint(transform.position);
+					wallOffset = wallOffset + headHit.normal;
+					transform.position = new Vector3(wallOffset.x, headHit.collider.GetComponent<MeshRenderer>().bounds.max.y, wallOffset.z);
+					currentState = State.grab;
+				}
+
 			}
 		}
 	}
