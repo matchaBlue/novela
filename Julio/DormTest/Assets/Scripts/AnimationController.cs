@@ -4,21 +4,35 @@ using System.Collections;
 public class AnimationController : MonoBehaviour {
 
 	PlayerController player;
-	public CameraController cam;
 	private Animator anim;
 	public float rotSpeed = 15f;
 	Vector3 modelRot;
 	float inX, inZ;
 
+	public enum State {movement, grab, getUp};
+
 	void Start(){
 		player = GetComponentInParent<PlayerController>();
 		anim = GetComponentInParent<Animator>();
-		modelRot = new Vector3(1, 0, 1);
 		inX = inZ = 0;
 	}
 
 	void Update(){
 
+		switch((State)player.getCurrState()){
+			case State.movement:
+				movementAnim();
+				break;
+			case State.grab:
+				grabAnim();
+				break;
+			case State.getUp:
+				getUpAnim();
+				break;
+		}
+	}
+
+	void movementAnim(){
 		Quaternion lookRot;
 		if(player.moveInput.x != 0){
 			inX = player.moveInput.x;
@@ -28,10 +42,12 @@ public class AnimationController : MonoBehaviour {
 		}
 		lookRot = Quaternion.LookRotation(new Vector3(inX, 0f, inZ));
 
-		if(Input.GetAxis("Horizontal") != 0 || Input.GetAxis("Vertical") != 0){
+		if((Input.GetAxis("Horizontal") != 0 || Input.GetAxis("Vertical") != 0)){
 			transform.rotation = Quaternion.Slerp(transform.rotation, lookRot, rotSpeed * Time.deltaTime);
 		}
-
+		if(player.getAngle() > 45){
+			transform.rotation = lookRot;
+		}
 
 		
 		if(player.getCC().isGrounded){
@@ -55,6 +71,29 @@ public class AnimationController : MonoBehaviour {
 				setAnim("isJumping");
 			}
 
+		}
+	}
+
+	float animTime = 0f;
+	void grabAnim(){
+		setAnim("isGrabbing");
+		animTime += Time.deltaTime;
+		if(animTime >= anim.GetCurrentAnimatorStateInfo(0).length/2f){
+			//enough time has passed for anim to finish
+			//if its done
+			player.setGrab(true);
+			animTime = 0f;
+		}
+	}
+
+	void getUpAnim(){
+		setAnim("isClimbing");
+		animTime += Time.deltaTime;
+		if(animTime >= anim.GetCurrentAnimatorStateInfo(0).length/1.2f){
+			//enough time has passed for anim to finish
+			//if its done
+			player.setGetUp(true);
+			animTime = 0f;
 		}
 	}
 

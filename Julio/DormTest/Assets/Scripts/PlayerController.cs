@@ -8,12 +8,15 @@ public class PlayerController : MonoBehaviour {
 	public float gravity = 0f;
 	public float directionalInfluence = 0f;
 
-	enum State {movement, grab, getUp};
+	public enum State {movement, grab, getUp};
 	State currentState; 
 	public Vector3 moveInput = Vector3.zero;
 	RaycastHit hit;
 	RaycastHit hHit;
 	public float raycastLength = 5f;
+	public Transform pivot;
+
+	public LevelManager lv;
 
 	private float angle;
 	CharacterController cc;
@@ -24,9 +27,20 @@ public class PlayerController : MonoBehaviour {
 		currentState = State.movement;
 	}
 
-	void Update(){
+	void FixedUpdate(){
 		stateControl ();
+		Debug.Log(currentState);
 		//cc.Move(MoveApplied(true) * speed * Time.deltaTime);
+	}
+
+	void OnTriggerEnter(Collider other){
+		if(other.gameObject.CompareTag("PickUp")){
+			HealthBar.health += HealthBar.medHealth;
+			other.gameObject.SetActive(false);
+		}
+		if(other.gameObject.CompareTag("Finish")){
+			lv.LoadScene(3);
+		}
 	}
 
 	void stateControl(){
@@ -40,6 +54,7 @@ public class PlayerController : MonoBehaviour {
 				Grab ();
 				break;
 			case State.getUp:
+				GetUp();
 				break;
 		}
 	}
@@ -58,16 +73,9 @@ public class PlayerController : MonoBehaviour {
 			Vector3 downhill = Vector3.Cross (into, hit.normal);
 			downhill = downhill.normalized;
 
-			//Debug.DrawRay(transform.position - (Vector3.up), -transform.up);
 			moveInput = (transform.right * Input.GetAxis("Horizontal")) + (transform.forward * Input.GetAxis("Vertical"));
-			//Debug.Log(downhill.y);
-			if(downhill.y == 0){
-				moveInput.y = 0;
-			}
-			else{
-				moveInput.y = downhill.y;
+			moveInput.y = downhill.y;
 
-			}
 			if(angle > 45f){
 			//sliding
 				moveInput = downhill;
@@ -84,8 +92,15 @@ public class PlayerController : MonoBehaviour {
 		else{
 			fallDi(directionalInfluence);
 		}
+
+		//apply gravity
 		moveInput.y += Physics.gravity.y * gravity;
-	
+		//rotate here based on pivot
+		if(Input.GetAxis("Vertical") != 0f || Input.GetAxis("Horizontal") != 0f){
+				transform.rotation = Quaternion.Euler(new Vector3(0f, pivot.eulerAngles.y, 0f));
+			}
+
+		//apply movement as a vector
 		cc.Move (moveInput * speed * Time.deltaTime);
 	}
 
@@ -137,29 +152,57 @@ public class PlayerController : MonoBehaviour {
 		return angle;
 	}
 
+	public State getCurrState(){return currentState;}
+
 	void grabCheck(){
 		RaycastHit headHit;
 		Ray headRay = new Ray();
 		headRay.origin = transform.position + (Vector3.up * 0.5f);
 		headRay.direction = head.forward;
 		Debug.DrawRay(headRay.origin, headRay.direction);
-		float headcastLength = 1f;
+		float headcastLength = 0.7f;
 		if(Physics.Raycast(headRay, out headHit, headcastLength)){
-			Debug.Log(headHit.collider.ToString());
-			if(headHit.collider.CompareTag("Player")){
+			if(headHit.collider.CompareTag("Ledge")){
 				if(headHit.collider.bounds.max.y - head.position.y < 0.5f){
 					Vector3 wallOffset = headHit.collider.GetComponent<MeshRenderer>().bounds.ClosestPoint(transform.position);
-					wallOffset = wallOffset + headHit.normal;
-					transform.position = new Vector3(wallOffset.x, headHit.collider.GetComponent<MeshRenderer>().bounds.max.y, wallOffset.z);
+					//wallOffset = wallOffset + headHit.normal;
+					transform.position = new Vector3(wallOffset.x, headHit.collider.GetComponent<MeshRenderer>().bounds.max.y - 0.8f, wallOffset.z);
+					//transform.rotation = Quaternion.Euler(new Vector3(0f, , 0f));
 					currentState = State.grab;
+					setGrab(false);
+					cc.height = 2f;
+					cc.center.Set(0, 0, 0);
+					hHit = headHit;
+					moveInput = Vector3.zero;
 				}
 
 			}
 		}
 	}
+
+	bool grabDone = false;
+	public void setGrab(bool isDone){grabDone = isDone;}
 		
 	void Grab(){
-		Debug.Log ("Grabbing");
+		if(grabDone){
+			//the anim is done, now check input
+			if(Input.GetAxis("Jump") > 0){
+				currentState = State.getUp;
+				setGrab(false);
+				setGetUp(false);
+			}
+		}
+	}
+
+	bool getUp = false;
+	public void setGetUp(bool isDone){getUp = isDone;}
+	void GetUp(){
+		if(getUp){
+			//shift the box to be ontop
+			transform.position = new Vector3(-hHit.normal.x + transform.position.x, transform.position.y + 1.8f, -hHit.normal.z + transform.position.z);
+			setGetUp(false);
+			currentState = State.movement;
+		}
 	}
 
 }

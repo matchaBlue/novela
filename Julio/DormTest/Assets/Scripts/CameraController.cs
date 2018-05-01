@@ -42,7 +42,8 @@ public class CameraController : MonoBehaviour {
 		Quaternion rot = Quaternion.Euler(desiredXAngle, desiredYAngle, 0);
 		transform.position = player.transform.position - (rot * offset);
 
-		player.transform.rotation = Quaternion.Euler(new Vector3(0f, pivot.eulerAngles.y, 0f));
+		//player.transform.rotation = Quaternion.Euler(new Vector3(0f, pivot.eulerAngles.y, 0f));
+
 
 		//if(transform.position.y < pivot.position.y)
 			//transform.position = new Vector3(transform.position.x, pivot.position.y - .5f, pivot.position.z);
@@ -57,4 +58,5 @@ public class CameraController : MonoBehaviour {
 		transform.LookAt(pivot.transform.forward);
 		*/
 	}
+
 }

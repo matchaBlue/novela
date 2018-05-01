@@ -680,7 +680,7 @@ ModelImporter:
       name: Landing
       takeName: Landing
       firstFrame: 0
-      lastFrame: 4
+      lastFrame: 1.23
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
