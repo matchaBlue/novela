@@ -4,13 +4,15 @@ using UnityEngine.UI;
 
 public class HealthBar : MonoBehaviour {
 
-	public static int health = 100;
+	public static float health = 100;
 	public static int medHealth;
 	public LevelManager lv;
 	public RectTransform healthBar;
+	public static float maxHealth;
 
 	void Start(){
-		health = (int)healthBar.sizeDelta.x;
+		health = healthBar.sizeDelta.x;
+		maxHealth = health;
 		medHealth = 30;
 		//health -= (health/10) * 9;
 	}

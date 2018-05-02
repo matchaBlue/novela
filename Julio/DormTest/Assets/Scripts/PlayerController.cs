@@ -4,6 +4,8 @@ using System.Collections;
 public class PlayerController : MonoBehaviour {
 
 	public float speed = 30f;
+	public float initSpeed;
+	public float sprintSpeed;
 	public float jumpSpeed = 10f;
 	public float gravity = 0f;
 	public float directionalInfluence = 0f;
@@ -25,17 +27,19 @@ public class PlayerController : MonoBehaviour {
 	void Start(){
 		cc = GetComponent<CharacterController>();
 		currentState = State.movement;
+		sprintSpeed = speed * 1.5f;
+		initSpeed = speed;
 	}
 
 	void FixedUpdate(){
 		stateControl ();
-		Debug.Log(currentState);
+		Debug.Log(cc.isGrounded);
 		//cc.Move(MoveApplied(true) * speed * Time.deltaTime);
 	}
 
 	void OnTriggerEnter(Collider other){
 		if(other.gameObject.CompareTag("PickUp")){
-			HealthBar.health += HealthBar.medHealth;
+			HealthBar.health += (int)(HealthBar.maxHealth * 0.25);
 			other.gameObject.SetActive(false);
 		}
 		if(other.gameObject.CompareTag("Finish")){
@@ -62,6 +66,7 @@ public class PlayerController : MonoBehaviour {
 	void MoveApplied(){
 		
 		if(cc.isGrounded){
+			speed = initSpeed;
 			cc.height = 2f;
 			cc.center.Set(0, 0, 0);
 			//cc.center.y = 0;
@@ -87,6 +92,13 @@ public class PlayerController : MonoBehaviour {
 					cc.center.Set(0, 0.4f, 0);
 					moveInput.y = jumpSpeed;
 				}
+			}
+
+			if (Input.GetAxis ("Fire3") > 0) {
+				speed = sprintSpeed;
+				HealthBar.health -= HealthBar.maxHealth * 0.01f * Time.deltaTime;
+			} else {
+				speed = initSpeed;
 			}
 		}
 		else{
@@ -159,8 +171,8 @@ public class PlayerController : MonoBehaviour {
 		Ray headRay = new Ray();
 		headRay.origin = transform.position + (Vector3.up * 0.5f);
 		headRay.direction = head.forward;
-		Debug.DrawRay(headRay.origin, headRay.direction);
-		float headcastLength = 0.7f;
+		//Debug.DrawRay(headRay.origin, headRay.direction);
+		float headcastLength = 1f;
 		if(Physics.Raycast(headRay, out headHit, headcastLength)){
 			if(headHit.collider.CompareTag("Ledge")){
 				if(headHit.collider.bounds.max.y - head.position.y < 0.5f){
