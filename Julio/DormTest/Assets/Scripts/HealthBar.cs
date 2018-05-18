@@ -23,7 +23,7 @@ public class HealthBar : MonoBehaviour {
 
 	int count = 0;
 	void healthControl(){
-		int barDivider = 12;
+		int barDivider = 10;
 
 		healthBar.sizeDelta = new Vector2(health, healthBar.sizeDelta.y);
 		if(Time.frameCount%barDivider == 0){

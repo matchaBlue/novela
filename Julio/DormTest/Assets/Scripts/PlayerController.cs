@@ -39,7 +39,7 @@ public class PlayerController : MonoBehaviour {
 
 	void OnTriggerEnter(Collider other){
 		if(other.gameObject.CompareTag("PickUp")){
-			HealthBar.health += (int)(HealthBar.maxHealth * 0.25);
+			HealthBar.health += (int)(HealthBar.maxHealth * 0.15);
 			other.gameObject.SetActive(false);
 		}
 		if(other.gameObject.CompareTag("Finish")){
@@ -96,7 +96,7 @@ public class PlayerController : MonoBehaviour {
 
 			if (Input.GetAxis ("Fire3") > 0) {
 				speed = sprintSpeed;
-				HealthBar.health -= HealthBar.maxHealth * 0.01f * Time.deltaTime;
+				HealthBar.health -= HealthBar.maxHealth * 0.02f * Time.deltaTime;
 			} else {
 				speed = initSpeed;
 			}
